@@ -58,7 +58,7 @@ export async function exportToExcel(list, fileName) {
             return item;
         });
         
-        // 在数组末尾追加物理【合计行】对象
+        // 在数组末尾追加物理合计行对象
         const totalRow = {};
         for (const key in headerMapping) {
             totalRow[headerMapping[key]] = '';
@@ -74,7 +74,7 @@ export async function exportToExcel(list, fileName) {
         const workbook = XLSX.utils.book_new();
         const worksheet = XLSX.utils.json_to_sheet(cleanedData);
         
-        // 4. ✨ 核心增强 A：遍历表头（第一行），设置文字加大、加粗、靠左及居中
+        // 4. 遍历表头（第一行），设置文字加大、加粗、靠左及居中
         const range = XLSX.utils.decode_range(worksheet['!ref']);
         for (let col = range.s.c; col <= range.e.c; col++) {
             const cellAddress = XLSX.utils.encode_cell({ r: 0, c: col }); // 第一行，r 为 0
@@ -91,7 +91,7 @@ export async function exportToExcel(list, fileName) {
             }
         }
         
-        // ✨ 核心修复与增强：为表格最后一行（合计行）注入特定的文本高亮加粗样式（靠左 + vertical居中）
+        // 为表格最后一行（合计行）注入特定的文本高亮加粗样式（靠左 + vertical居中）
         const lastRowIndex = range.e.r;
         for (let col = range.s.c; col <= range.e.c; col++) {
             const cellAddress = XLSX.utils.encode_cell({ r: lastRowIndex, c: col });
@@ -100,19 +100,19 @@ export async function exportToExcel(list, fileName) {
                 cell.s = {
                     font: { name: '微软雅黑', sz: 11, bold: true, color: { rgb: "000000" } }, // 加粗
                     alignment: {
-                        horizontal: "left",    // ✨ 核心修复：文字及数据一律严格靠左对齐
-                        vertical: "center"     // ✨ 核心修复：配合行高垂直方向绝对居中
+                        horizontal: "left",    // 文字及数据一律严格靠左对齐
+                        vertical: "center"     // 配合行高垂直方向绝对居中
                     }
                 };
             }
         }
         
-        // 5. ✨ 核心修复与增强 B：表头行与合计行行高分别独立配置
+        // 5. 表头行与合计行行高分别独立配置
         worksheet['!rows'] = [];
         worksheet['!rows'][0] = { hpt: 30 };            // 表头行高设为 30
-        worksheet['!rows'][lastRowIndex] = { hpt: 30 }; // ✨ 核心修复：将底部的合计行高同样设定为 30
+        worksheet['!rows'][lastRowIndex] = { hpt: 30 }; // 将底部的合计行高同样设定为 30
         
-        // ==================== ✨ 全表动态扫描自适应列宽（保持不变） ====================
+        // 全表动态扫描自适应列宽
         const colWidths = [];
         for (let col = range.s.c; col <= range.e.c; col++) {
             let maxCharLength = 10;
@@ -137,7 +137,6 @@ export async function exportToExcel(list, fileName) {
             colWidths.push({ wch: Math.ceil(maxCharLength + 3) });
         }
         worksheet['!cols'] = colWidths;
-        // ====================================================================================
         
         XLSX.utils.book_append_sheet(workbook, worksheet, "发票明细");
         

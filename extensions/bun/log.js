@@ -64,7 +64,7 @@ function writeLog(level, message, meta = {}) {
         });
     }
     
-    // 【核心优化点】：直接扁平展开元数据串，不要再生成带缩进的 inspect 结构
+    // 直接扁平展开元数据串，不要再生成带缩进的 inspect 结构
     let metaStr = '';
     if (Object.keys(pureMeta).length) {
         try {
@@ -82,7 +82,7 @@ function writeLog(level, message, meta = {}) {
     else if (level === 'warn') console.warn(logLine.trim());
     else console.log(logLine.trim());
     
-    // 2. 【终极修复】：改用 appendFileSync。即使主线程接下来进入死循环，日志也会在这一行立刻强制落盘！
+    // 改用 appendFileSync。即使主线程接下来进入死循环，日志也会在这一行立刻强制落盘
     try {
         appendFileSync(logFilePath, logLine, 'utf8');
     } catch (e) {

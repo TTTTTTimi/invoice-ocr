@@ -330,7 +330,7 @@ export function parseAndCleanInvoice(ocrResults) {
     const fullText = cleanLines.join("\n");
     const noSpaceText = fullText.replace(/\s+/g, '');
 
-// ==================== 🎫 【新增】铁路电子客票前置识别判定 ====================
+// 铁路电子客票前置识别判定
     const isRailwayInvoice = noSpaceText.includes("铁路电子客票") || noSpaceText.includes("电子客票号");
     if (isRailwayInvoice) {
         invoice.invoiceType = "电子发票（铁路电子客票）";
@@ -339,7 +339,7 @@ export function parseAndCleanInvoice(ocrResults) {
         invoice.invoiceType = "电子发票（专用发票）";
     }
 
-// ==================== 🏢 1. 基础元数据全图精准过滤 ====================
+// 1. 基础元数据全图精准过滤
 // 铁路发票的号码可能标记为“发票号码”或直接出现在顶部
     let numMatch = fullText.match(/(?:发票号码|号码)[:：\s]?(\d{10,22})/);
     if (!numMatch && isRailwayInvoice) {
@@ -356,7 +356,7 @@ export function parseAndCleanInvoice(ocrResults) {
     const issuerMatch = fullText.match(/(?:开票人)[:：\s]?([^\s\n]+)/);
     if (issuerMatch) invoice.issuer = String(issuerMatch[1]);
 
-// ==================== 🏢 2. 🛡️ 名字从上往下高度轴排队提纯 ====================
+// 2. 名字从上往下高度轴排队提纯
     const companyPool = [];
     ocrResults.forEach(item => {
         if (!item || !item.text || !item.box || !item.box[0]) return;
@@ -386,7 +386,7 @@ export function parseAndCleanInvoice(ocrResults) {
         if (companyPool.length >= 2) invoice.sellerName = companyPool[1].name;
     }
 
-// ==================== 💰 3. 金额特征提纯与数学指纹矩阵锁定 ====================
+// 3. 金额特征提纯与数学指纹矩阵锁定
 // 优先提取铁路发票的特有金额特征 "票价: ¥127.00"
     let railwayPriceFound = false;
     if (isRailwayInvoice) {
@@ -464,7 +464,7 @@ export function parseAndCleanInvoice(ocrResults) {
         }
     }
 
-    // ==================== 🧮 5. 税率精确计算与强制正数化（含铁路反算） ====================
+    // 5. 税率精确计算与强制正数化（含铁路反算）
     let fTotal = Math.abs(parseFloat(invoice.totalAmount));
     
     if (isRailwayInvoice && !isNaN(fTotal)) {
@@ -494,7 +494,7 @@ export function parseAndCleanInvoice(ocrResults) {
         invoice.totalAmount = !isNaN(fTotal) ? fTotal.toFixed(2) : "";
     }
 
-    // ==================== 🛡️ 6. 终极数据类型参数安全熔断 ====================
+    // 6. 终极数据类型参数安全熔断
     Object.keys(invoice).forEach(key => {
         if (Array.isArray(invoice[key])) {
             invoice[key] = String(invoice[key] || "");

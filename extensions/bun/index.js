@@ -260,7 +260,7 @@ const OCR_DIR_PATH = dirname(OCR_EXE_PATH);
                                 });
                                 
                                 try {
-                                    // 🛠️ 1. 单引擎串行识别 9 个切片（禁止 Promise.all，避免结果串台）
+                                    // 1. 单引擎串行识别 9 个切片（禁止 Promise.all，避免结果串台）
                                     const typeOcr = await recognizeOffline(invoiceType_image, true);
                                     const numberOcr = await recognizeOffline(invoiceNumber_image, true);
                                     const dateOcr = await recognizeOffline(invoiceDate_image, true);
@@ -281,7 +281,7 @@ const OCR_DIR_PATH = dirname(OCR_EXE_PATH);
                                         return [];
                                     };
                                     
-                                    // 🛠️ 2. 字段级语义清洗（号码/日期/购销方/金额/铁路票）
+                                    // 2. 字段级语义清洗（号码/日期/购销方/金额/铁路票）
                                     const structuredInvoice = cleanCroppedInvoiceFields({
                                         typeTexts: extractText(typeOcr),
                                         numTexts: extractText(numberOcr),
@@ -303,7 +303,7 @@ const OCR_DIR_PATH = dirname(OCR_EXE_PATH);
                                     
                                     state.current++;
                                     
-                                    // 🛠️ 3. 字段融合并保存至 Bun SQLite
+                                    // 3. 字段融合并保存至 Bun SQLite
                                     // annotatedPath 由前端落盘后传入，此处只入库路径；不改动 invoices.db 存储位置
                                     const finalInvoiceData = {
                                         ...args,
@@ -477,7 +477,7 @@ const OCR_DIR_PATH = dirname(OCR_EXE_PATH);
                     try {
                         const parsed = JSON.parse(message);
                         
-                        // ✨ 新增：收到前端心跳包，原路返回 pong
+                        // 收到前端心跳包，原路返回 pong
                         if (parsed.type === "ping") {
                             ws.send(JSON.stringify({ type: "pong", time: new Date().toISOString() }));
                             return; // 拦截心跳，不向下走 OCR 的广播逻辑

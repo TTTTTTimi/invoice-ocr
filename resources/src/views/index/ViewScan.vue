@@ -52,14 +52,14 @@
         };
         
         return {
-            // ==================== ⬆️ 上方 5 个区域（号码/日期为初值，随后墨迹贴齐） ====================
+            // 上方 5 个区域（号码/日期为初值，随后墨迹贴齐）
             invoiceType_image:   top(0.28, 35, 0.40, 280), // 标题+红章（含税务局）
             invoiceNumber_image: top(0.775, 100, 0.20, 52),
             invoiceDate_image:   top(0.775, 160, 0.16, 48),
             buyerName_image:     top(0.055, 320, 0.446, 180),
             sellerName_image:    top(0.530, 320, 0.444, 180),
             
-            // ==================== ⬇️ 下方 4 个区域（金额/税额初值，随后相对价税合计向上贴齐） ====================
+            // 下方 4 个区域（金额/税额初值，随后相对价税合计向上贴齐）
             totalAmount_image:   bottom(0.70, 385, 0.18, 48), // 价税合计（小写）：略左移、收窄，避免偏右过宽
             taxAmount_image:     bottom(0.865, 455, 0.12, 50),
             amount_image:        bottom(0.65, 455, 0.15, 50),
@@ -286,7 +286,7 @@
         return (bSum / n) - (rSum / n) > 18;
     };
     
-    // 数据抽取 (🛠️ 核心重写：完美支持在大图上绘制调试黄框，且不污染 OCR 切片)
+    // 数据抽取：支持在大图上绘制调试黄框，且不污染 OCR 切片
     const cropAllRegions = (mainCanvas, options = {}) => {
         const W = mainCanvas.width;
         const H = mainCanvas.height;
@@ -296,14 +296,14 @@
             ? getRailwayRegions(W, H)
             : refineRegionsByInk(mainCanvas, getAlignedRegions(W, H));
         
-        // 🎨 1. 建立一张专门用来打框标记的“大图画布”，将原始图像 1:1 复制过来
+        // 1. 建立一张专门用来打框标记的“大图画布”，将原始图像 1:1 复制过来
         const visualCanvas = document.createElement('canvas');
         const visualContext = visualCanvas.getContext('2d');
         visualCanvas.width = W;
         visualCanvas.height = H;
         visualContext.drawImage(mainCanvas, 0, 0);
         
-        // 🎨 2. 在“大图画布”上用高亮黄色线条将矩阵框圈起来
+        // 2. 在“大图画布”上用高亮黄色线条将矩阵框圈起来
         visualContext.strokeStyle = "#FFCC00"; // 标准财务荧光黄边框
         visualContext.lineWidth = 4;           // 设置粗细为 4 像素，确保在 2048 分辨率下清晰可见
         visualContext.lineJoin = "round";      // 圆角边框过渡
@@ -314,14 +314,14 @@
             visualContext.strokeRect(region.x, region.y, region.w, region.h);
         });
         
-        // 🎨 3. 将打好黄框的发票大图转换为 Base64 塞入 entry_image 字段
+        // 3. 将打好黄框的发票大图转换为 Base64 塞入 entry_image 字段
         const outputOcrPayload = {
             entry_image: visualCanvas.toDataURL('image/png').replace(/^data:image\/png;base64,/, ''),
             isRailwayInvoice: isRailway,
             sellerName_image: '' // 默认空；普通票下面会覆盖
         };
         
-        // ✂️ 4. 建立微型裁剪画布进行局部小图截取（注意：必须从干净的 mainCanvas 上截取，防止黄线干扰 OCR 识别率）
+        // 4. 建立微型裁剪画布进行局部小图截取（注意：必须从干净的 mainCanvas 上截取，防止黄线干扰 OCR 识别率）
         const cropCanvas = document.createElement('canvas');
         const cropContext = cropCanvas.getContext('2d');
         
@@ -404,7 +404,7 @@
     // 将 Base64 字符串保存为本地文件
     // const saveBase64ToFile = async (base64Data, targetPath) => {
     //     try {
-    //         // ========== 【核心修复 1】：自动检查并创建父级文件夹 ==========
+    //         // 自动检查并创建父级文件夹
     //         // 兼容斜杠和反斜杠，切出文件夹路径
     //         const folderPath = targetPath.substring(0, Math.max(targetPath.lastIndexOf('/'), targetPath.lastIndexOf('\\')));
     //         if (folderPath) {
@@ -493,7 +493,7 @@
                     const imagePath = await filesystem.getNormalizedPath(item.path);
                     const binaryData = await filesystem.readBinaryFile(imagePath);
                     
-                    // 🛠️ 核心对齐升级：利用临时 Blob 将图片转为黄金 2048 像素并进行高精字段裁剪
+                    // 利用临时 Blob 将图片转为 2048 像素并进行高精字段裁剪
                     const imageFields = await convertImageToOcrFields(binaryData);
                     
                     // 将解构后的数据塞进数组，此时图片的输出格式与 PDF 变得完全一样！
@@ -505,7 +505,7 @@
             }
         }
         
-        // === 3. 统一上传与本地状态更新流 ===
+        // 3. 统一上传与本地状态更新流
         currentScanTotal.value = images.length;
         await $neu.log(`[扫描] 待 OCR 数量=${images.length}`, 'info');
         

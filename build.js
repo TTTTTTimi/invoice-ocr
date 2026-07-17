@@ -52,7 +52,7 @@ const copyFilteredTree = (srcRoot, destRoot) => {
             const destPath = join(destDir, ent.name)
             
             if (ent.isDirectory()) {
-                // 【核心修复 2】：只要是目录，在递归向下走之前，先确保创建目标父级结构
+                // 只要是目录，在递归向下走之前，先确保创建目标父级结构
                 mkdirSync(destDir, { recursive: true })
                 walk(srcPath, destPath)
             }

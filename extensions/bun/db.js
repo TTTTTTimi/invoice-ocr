@@ -53,7 +53,7 @@ try {
     logger.warn('数据库列迁移跳过', { error: e.message });
 }
 
-// ==================== 1. 增 (Insert) ====================
+// 1. 增 (Insert)
 export function insertInvoice(invoiceData) {
     const sql = `
         INSERT INTO invoices (
@@ -99,7 +99,7 @@ export function insertInvoice(invoiceData) {
     }
 }
 
-// ==================== 2. 删 (Delete) ====================
+// 2. 删 (Delete)
 /**
  * 根据 ID 移除发票记录（支持根据业务单号降级兼容）
  * @param {number|string} id - 如果是数字/对象，则优先处理
@@ -136,7 +136,7 @@ export function deleteInvoice(id) {
     }
 }
 
-// ==================== 3. 改 (Update) ====================
+// 3. 改 (Update)
 /**
  * 针对 bun:sqlite 优化的发票更新函数
  * @param {number|string} id - 数据库自增主键 ID
@@ -158,7 +158,7 @@ export function updateInvoice(id, updateData) {
                 // 使用 bun:sqlite 标准的问号占位符
                 const conflictSql = "SELECT 1 FROM invoices WHERE invoiceNumber = ? AND id != ? LIMIT 1";
                 
-                // 🛠️ Bun.js 标准写法：先 prepare，再使用 .get() 获取单条结果
+                // Bun.js 标准写法：先 prepare，再使用 .get() 获取单条结果
                 const query = db.prepare(conflictSql);
                 const existing = query.get(newInvoiceNumber, numericId);
                 
@@ -193,7 +193,7 @@ export function updateInvoice(id, updateData) {
         params.push(numericId);
         
         // 6. 执行更新
-        // 🛠️ Bun.js 标准写法：先 prepare，再使用 .run() 执行更新
+        // Bun.js 标准写法：先 prepare，再使用 .run() 执行更新
         const statement = db.prepare(sql);
         const result = statement.run(...params);
         
@@ -213,11 +213,11 @@ export function updateInvoice(id, updateData) {
     }
 }
 
-// ==================== 4. 查 (Select) ====================
+// 4. 查 (Select)
 /**
  * 条件分页查询发票（修复版：完美匹配数据库格式 + 新增发票号码查询）
  * @param {string} [buyerName] - 购买方名称（模糊查询）
- * @param {string} [invoiceNumber] - 发票号码（模糊查询）✨【新增】
+ * @param {string} [invoiceNumber] - 发票号码（模糊查询）
  * @param {string} [date] - 开票日期的年份或月份，例如: "2025", "2025-07"
  * @param {number} [pageNo=1] - 当前页码
  * @param {number} [limit=20] - 每页条数
@@ -232,7 +232,7 @@ export function queryInvoices({ buyerName, invoiceNumber, date, pageNo = 1, limi
         params["$buyerName"] = `%${buyerName}%`;
     }
     
-    // 2. ✨【新增】发票号码模糊查询与安全熔断
+    // 2. 发票号码模糊查询与安全熔断
     if (invoiceNumber) {
         // 强制转换为字符串并修剪空格，防止传入数字或其他类型触发报错
         const cleanInvoiceNumber = String(invoiceNumber).trim();
@@ -263,18 +263,18 @@ export function queryInvoices({ buyerName, invoiceNumber, date, pageNo = 1, limi
         }
     }
     
-    // ---- ✨ 核心修复：安全抓取数字，坚决阻断数字计算产生 NaN 导致的 500 崩溃 ----
+    // 安全抓取数字，阻断数字计算产生 NaN 导致的 500 崩溃
     const safePageNo = parseInt(pageNo, 10) || 1;
     const safeLimit = parseInt(limit, 10) || 20;
     const offset = (safePageNo - 1) * safeLimit;
     
     try {
-        // 1. 查询当前筛选条件下的【总数据条数】（前端分页器必填项）
+        // 1. 查询当前筛选条件下的总数据条数（前端分页器必填项）
         const countSql = `SELECT COUNT(*) as total FROM invoices ${whereClause}`;
         const countResult = db.query(countSql).get(params);
         const total = countResult ? countResult.total : 0;
         
-        // 2. 查询当前页的【数据列表】
+        // 2. 查询当前页的数据列表
         let selectSql = `SELECT * FROM invoices ${whereClause} ORDER BY createdAt DESC LIMIT $limit OFFSET $offset`;
         
         // 混入分页计算所需要的参数
@@ -330,7 +330,7 @@ export function exportInvoices({ buyerName, date } = {}) {
     }
     
     try {
-        // 3. ✨ 核心修改：移除 LIMIT 和 OFFSET，直接全量排序查询
+        // 3. 移除 LIMIT 和 OFFSET，直接全量排序查询
         let selectSql = `SELECT * FROM invoices ${whereClause} ORDER BY createdAt DESC`;
         
         const list = db.query(selectSql).all(params);

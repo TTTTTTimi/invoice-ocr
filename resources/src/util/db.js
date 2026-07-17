@@ -1,13 +1,13 @@
 import dayjs from "dayjs";
 import Dexie from 'dexie';
 
-// 1. 创建数据库（✨ 核心优化：在 entry 上建立二级索引，允许使用文件名做高效率查删）
+// 1. 创建数据库（在 entry 上建立二级索引，允许使用文件名做高效率查删）
 const db = new Dexie('InvoiceDatabase');
 db.version(1).stores({
     invoices: '++id, entry'
 });
 
-// ==================== ➕ 增 ====================
+// 增
 export const addInvoice = async (entry) => {
     // 防御校验：严禁写入空的、不合法的文件名
     if (!entry || typeof entry !== 'string') {
@@ -27,11 +27,11 @@ export const addInvoice = async (entry) => {
     }
 }
 
-// ==================== ❌ 删 ====================
+// 删
 export const deleteInvoice = async (entry) => {
     try {
         if (entry) {
-            // ✨ 核心修复：由于主键是 id 数字，按 entry 字符串文件名删除时必须使用 where 匹配
+            // 主键是 id 数字，按 entry 字符串文件名删除时必须使用 where 匹配
             const deleteCount = await db.invoices.where('entry').equals(entry).delete();
             
             if (deleteCount === 0) {
@@ -49,14 +49,14 @@ export const deleteInvoice = async (entry) => {
     }
 }
 
-// ==================== 🔍 查 ====================
+// 查
 export const findInvoice = async (entry) => {
     if (!entry) {
         return { code: -1, data: null, msg: '查询参数 entry 不能为空' };
     }
     
     try {
-        // ✨ 核心修复：按 entry 字符串查询时，通过 where 检索匹配的第一条记录
+        // 按 entry 字符串查询时，通过 where 检索匹配的第一条记录
         const result = await db.invoices.where('entry').equals(entry).first();
         
         return result

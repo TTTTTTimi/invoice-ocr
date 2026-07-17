@@ -12,7 +12,7 @@ rec_model_dir models/ch_PP-OCRv3_rec_infer
 # 字典路径
 rec_char_dict_path models/dict_chinese.txt
 
-# ==================== 以下为新增的调优参数 ====================
+# 以下为新增的调优参数
 
 cls 1
 use_angle_cls 1
