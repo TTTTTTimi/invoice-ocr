@@ -132,11 +132,11 @@ invoice/
 
 整体分两步：**先编译出可运行目录**，再用 **Inno Setup Compiler** 打成安装包。
 
-### 第一步：编译应用（`all-build.bat`）
+### 第一步：编译应用（打包示例）
 
-在项目根目录执行 `_config/build/all-build.bat`（或把下面命令逐行贴进 PowerShell）。脚本全文如下：
+在项目**根目录**打开 PowerShell，按下面示例逐行执行（可整段复制粘贴）：
 
-```bat
+```powershell
 cp -Force neutralino.prod.config.json neutralino.config.json;
 neu build;
 mkdir -Force extensions/bun/bin/;
@@ -146,7 +146,7 @@ Move-Item -Force extensions/bun/bin/service.exe dist/发票工具/bin/service.ex
 Copy-Item -Path "extensions/bun/PaddleOCR" -Destination "dist/发票工具/" -Recurse -Force;
 ```
 
-脚本在做什么（按顺序）：
+以上命令在做什么（按顺序）：
 
 1. 切到生产配置 `neutralino.prod.config.json`
 2. `neu build` 打出 Neutralino 产物到 `dist/发票工具/`
