@@ -1,0 +1,22 @@
+html, body, div, p, ul, ol, li,
+h1, h2, h3, h4, h5, h6,
+dd, dt, dl, table, tbody, th, td,
+img, video, audio, a, strong, b,
+i, nav, small,
+span, select, option, section,
+header, footer, main, aside,
+form, button, input {
+    @apply m-0 p-0 box-border;
+
+    &:focus {
+        @apply outline-none;
+    }
+}
+
+ul, ol {
+    @apply list-none;
+}
+
+.el-overlay {
+    @apply backdrop-blur-5;
+}

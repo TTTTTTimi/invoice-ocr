@@ -1,0 +1,10 @@
+{
+  "name": "bun",
+  "module": "index.js",
+  "type": "module",
+  "private": true,
+  "devDependencies": {},
+  "dependencies": {
+    "dayjs": "^1.11.21"
+  }
+}

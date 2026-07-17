@@ -1,0 +1,79 @@
+{
+  "$schema": "https://raw.githubusercontent.com/neutralinojs/neutralinojs/main/schemas/neutralino.config.schema.json",
+  "applicationId": "js.win.tool",
+  "applicationName": "发票工具",
+  "author": "cs",
+  "description": "发票工具",
+  "version": "1.0.0",
+  "defaultMode": "window",
+  "port": 0,
+  "documentRoot": "/resources/dist/",
+  "url": "/",
+  "enableServer": true,
+  "enableNativeAPI": true,
+  "singlePageServe": true,
+  "tokenSecurity": "one-time",
+  "logging": {
+    "enabled": true,
+    "writeToLogFile": true
+  },
+  "enableExtensions": true,
+  "extensions": [
+    {
+      "id": "js.tool.bun",
+      "command": "${NL_PATH}/bin/service.exe"
+    }
+  ],
+  "nativeAllowList": [
+    "app.*",
+    "os.*",
+    "clipboard.*",
+    "window.*",
+    "computer.*",
+    "events.*",
+    "storage.*",
+    "filesystem.*",
+    "updater.*",
+    "extensions.*",
+    "debug.log"
+  ],
+  "globalVariables": {},
+  "modes": {
+    "window": {
+      "title": "发票工具",
+      "width": 900,
+      "height": 600,
+      "minWidth": 900,
+      "minHeight": 600,
+      "center": true,
+      "transparent": false,
+      "fullScreen": false,
+      "alwaysOnTop": false,
+      "icon": "/resources/public/logo.png",
+      "enableInspector": false,
+      "borderless": false,
+      "maximize": true,
+      "hidden": false,
+      "resizable": true,
+      "exitProcessOnClose": true,
+      "useSavedState": false,
+      "useLogicalPixels": true,
+      "injectGlobals": true,
+      "injectClientLibrary": false
+    }
+  },
+  "cli": {
+    "binaryName": "发票工具",
+    "resourcesPath": "/resources/dist/",
+    "frontendLibrary": {
+      "patchFile": "/resources/index.html",
+      "devUrl": "http://localhost:5173",
+      "projectPath": "/resources/",
+      "initCommand": "pnpm add",
+      "devCommand": "pnpm run dev",
+      "buildCommand": "pnpm run build"
+    },
+    "binaryVersion": "6.5.0",
+    "clientVersion": "6.5.0"
+  }
+}

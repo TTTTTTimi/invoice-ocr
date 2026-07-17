@@ -1,0 +1,6 @@
+{
+  "name": "tool",
+  "scripts": {
+    "win:dev": "copy /Y neutralino.dev.config.json neutralino.config.json && neu run"
+  }
+}
